@@ -2,6 +2,8 @@
 
 Стек: HTML, SCSS, TS, Webpack
 
+Проект представляет собой MVP паттерн
+
 Структура проекта:
 - src/ — исходные файлы проекта
 - src/components/ — папка с JS компонентами
@@ -133,4 +135,163 @@ yarn build
 - Иконка успешной оплаты
 - Уведомление о списанной сумме
 - Кнопка "За новыми покупками!"
+
+## Модели
+
+### Product
+
+Product модель хранит в себе данные продукта
+
+```
+interface Product {
+  id: string;
+  title: string;
+  description: string;
+  image: string;
+  category: string;
+  price: number | null;
+  formatPrice: () => string;
+}
+```
+
+Класс  ProductModel наследует интерфейс Product
+
+Конструктор:
+
+constructor(data: Product) - В конструктор передается объект с полями, описанными в интерфейсе Product
+
+Поля класса:
+
+id: string - уникальный id продукта
+title: string - название продукта
+description: string - описание продукта
+image: string - ссылка на изображение
+category: string - название категории
+price: number | null - цена
+
+Методы класса:
+
+formatPrice(): string - возвращает цену продукта в необходимом виде для отображения
+
+### ProductList
+
+Модель хранит в себе список продуктов
+
+```
+interface ProductList {
+  total: number;
+  items: Product[];
+}
+```
+
+Класс ProductListModel наследует интерфейс ProductList
+
+Конструктор:
+
+constructor(items: Product[], total: number) - конструктор принимает массив объектов Product и общее количество элементов
+
+Поля класса:
+
+total: number - общее количество элементов
+items: Product[] - элементы списка продуктов
+
+Методы класса:
+
+set items(data: Product[]) - при установке поля конвертируем к нужному классу
+
+### UserData
+
+Модель хранит в себе данные пользователя
+
+```
+interface UserData {
+  email: string;
+  phone: string;
+  address: string;
+}
+```
+
+Класс UserDataModel наследует интерфейс UserData
+
+Конструктор:
+
+constructor(userData: UserData) - конструктор принимает объект типа UserData
+
+Поля класса:
+
+email: string - почта пользователя
+phone: string - номер телефона
+address: string - адресс
+
+Методы класса:
+
+set email(email) - принимает почту и валидирует, в случае несоответсвия шаблону выкидывает ошибку
+set phone(phone) - принимает номер телефона и валидирует, в случае несоответсвия шаблону выкидывает ошибку
+set address(address) - принимает адресс и валидирует, в случае несоответсвия шаблону выкидывает ошибку
+
+### Order
+
+Модель хранит в себе данные пользователя и заказа
+
+```
+export interface Order extends UserData {
+  payment: "online" | "offline";
+  total: number;
+  items: Pick<Product, 'id'>[]
+}
+```
+
+Класс OrderModel наследует интерфейс Order
+
+Конструктор:
+
+constructor(order: Order) - конструктор принимает объект типа Order
+
+Поля класса:
+
+email: string - почта пользователя
+phone: string - номер телефона
+address: string - адресс
+payment: "online" | "offline" - тип платежа
+total: number - общая стоимость заказа
+items: Pick<Product, 'id'>[] - массив id продуктов
+
+Методы класса:
+
+set email(email) - принимает почту и валидирует, в случае несоответсвия шаблону выкидывает ошибку
+set phone(phone) - принимает номер телефона и валидирует, в случае несоответсвия шаблону выкидывает ошибку
+set address(address) - принимает адресс и валидирует, в случае несоответсвия шаблону выкидывает ошибку
+set payment("online" | "offline") - принимает два типа заказа
+set total(totalPrice: number) - принимает сумму заказа
+set items(prodictsId: Pick<Product, 'id'>[]) - принимает массив айди продуктов
+
+### ApiOrder
+
+Модель зранит в себе данные о заказе
+
+```
+interface ApiOrder {
+  id: string;
+  total: number;
+}
+```
+
+Класс ApiOrderModel наследует интерфейс ApiOrder
+
+Конструктор:
+
+constructor(id: string, total: number) - конструктор принимает id заказа и общую сумму
+
+Поля класса:
+
+id: string - id заказа
+total: number - общая сумма заказа
+
+Методы класса:
+
+set id(id) - принимает и устанавливает id заказа
+set total(total) - принимает и устанавливает общую сумму заказа
+
+## Представления
+
 
