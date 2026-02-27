@@ -1,3 +1,5 @@
+import { ElementChild, ElementProps, SelectorElement } from "../types/html";
+
 export function pascalToKebab(value: string): string {
     return value.replace(/([a-z0–9])([A-Z])/g, "$1-$2").toLowerCase();
 }
@@ -24,8 +26,6 @@ export function ensureAllElements<T extends HTMLElement>(selectorElement: Select
     }
     throw new Error(`Unknown selector element`);
 }
-
-export type SelectorElement<T> = T | string;
 
 export function ensureElement<T extends HTMLElement>(selectorElement: SelectorElement<T>, context?: HTMLElement): T {
     if (isSelector(selectorElement)) {
@@ -66,7 +66,7 @@ export function getObjectProperties(obj: object, filter?: (name: string, prop: P
         )
     )
         .filter(([name, prop]: [string, PropertyDescriptor]) => filter ? filter(name, prop) : (name !== 'constructor'))
-        .map(([name, prop]) => name);
+        .map(([name]) => name);
 }
 
 /**
@@ -81,10 +81,13 @@ export function setElementData<T extends Record<string, unknown> | object>(el: H
 /**
  * Получает типизированные данные из dataset атрибутов элемента
  */
-export function getElementData<T extends Record<string, unknown>>(el: HTMLElement, scheme: Record<string, Function>): T {
+export function getElementData<T extends Record<string, unknown>>(
+    el: HTMLElement,
+    scheme: Record<string, (value: string) => unknown>
+): T {
     const data: Partial<T> = {};
     for (const key in el.dataset) {
-        data[key as keyof T] = scheme[key](el.dataset[key]);
+        data[key as keyof T] = scheme[key](el.dataset[key]) as T[keyof T];
     }
     return data as T;
 }
@@ -132,4 +135,27 @@ export function createElement<
         }
     }
     return element;
+}
+
+export function isChildElement(x: unknown): x is ElementChild {
+  return x instanceof HTMLElement || Array.isArray(x);
+}
+
+export function setElementChildren(root: HTMLElement, children: ElementChild) {
+  root.replaceChildren(...(Array.isArray(children) ? children : [children]));
+}
+
+export function setElementProps<T extends HTMLElement>(
+  element: T,
+  props: ElementProps<T>
+) {
+  for (const key in props) {
+    const value = props[key];
+    if (isPlainObject(value) && key === 'dataset') {
+      setElementData(element, value);
+    } else {
+      // Cast to any since DOM property types don't always match our generic constraint
+      (element as any)[key] = isBoolean(value) ? value : String(value);
+    }
+  }
 }
