@@ -1,4 +1,4 @@
-import { AppApi } from './components/AppApi';
+import { AppApi } from './components/api/AppApi';
 import { EventEmitter } from './components/base/events';
 import { ProductListModel } from './components/model/product-list';
 import './scss/styles.scss';

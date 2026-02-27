@@ -1,5 +1,5 @@
-import { Product, ProductList } from '../types';
-import { Api, ApiListResponse } from './base/api';
+import { Product, ProductList } from '../../types';
+import { Api, ApiListResponse } from '../base/api';
 
 export class AppApi extends Api {
 	readonly cdn: string;
