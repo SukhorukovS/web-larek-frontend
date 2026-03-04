@@ -27,7 +27,7 @@ export class CardView extends View<Product> {
     this._description = this.ensure('.card__text', container);
     this._button = this.ensure('.card__button', container) as HTMLButtonElement;
 
-    this._button.addEventListener('click', this.addToBasket.bind(this));
+    this._button.addEventListener('click', this.handleButtonClick.bind(this));
   }
 
   set image(value: string) {
@@ -55,7 +55,23 @@ export class CardView extends View<Product> {
     this.setValue(this._description, value);
   }
 
+  handleButtonClick() {
+    if (this._button.dataset.value === '-1') {
+      this.removeFromBasket();
+      return;
+    }
+    this.addToBasket();
+  }
+
+  removeFromBasket() {
+    this.events.emit('basket:remove', { id: this.id });
+    this.setValue(this._button, 'В корзину');
+    this.setValue(this._button, { dataset: { value: '+1' } });
+  }
+
   addToBasket() {
-    this.events.emit('basket:add', { id: this.id })
+    this.events.emit('basket:add', { id: this.id });
+    this.setValue(this._button, 'Убрать');
+    this.setValue(this._button, { dataset: { value: '-1' } });
   }
 }

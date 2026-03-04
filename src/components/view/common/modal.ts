@@ -19,10 +19,14 @@ export class Modal extends View<IModalData> {
     this.container.addEventListener('click', this.close.bind(this))
   }
 
-  close() {
-    this.container.classList.remove('modal_active');
-    this.content = null;
-    this.events.emit('modal:close');
+  close(event: MouseEvent) {
+    const target = event.target as HTMLElement;
+    console.log(!target.classList.contains('modal'));
+    if (target.classList.contains('modal__close') || target.classList.contains('modal')) {
+      this.container.classList.remove('modal_active');
+      this.content = null;
+      this.events.emit('modal:close');
+    }
   }
 
   set content(value: HTMLElement) {

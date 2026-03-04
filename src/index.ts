@@ -58,6 +58,10 @@ events.on('basket:add', (data: { id: string }) => {
   orderModel.addProduct({ id, title, price });
 })
 
+events.on('basket:remove', (data: { id: string }) => {
+  orderModel.removeProduct({ id: data.id });
+})
+
 events.on('basket:countChange', ({ count }: { count: number }) => {
   page.counter = count;
 })
