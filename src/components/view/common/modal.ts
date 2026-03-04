@@ -16,6 +16,7 @@ export class Modal extends View<IModalData> {
     this._content = this.ensure<HTMLElement>('.modal__content', container);
 
     this._closeButton.addEventListener('click', this.close.bind(this));
+    this.container.addEventListener('click', this.close.bind(this))
   }
 
   close() {
