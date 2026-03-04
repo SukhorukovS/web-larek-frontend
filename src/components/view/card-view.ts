@@ -1,38 +1,46 @@
 import { Product } from "../../types";
 import { CDN_URL } from "../../utils/constants";
 import { categoryCard } from "../../utils/utils";
+import { IEvents } from "../base/events";
 import { View } from "../base/view";
 
 interface ICardActions {
   onClick: (event: MouseEvent) => void;
 }
 
-export class CardCatalog extends View<Product> {
+export class CardView extends View<Product> {
   protected _category: HTMLElement;
   protected _image: HTMLImageElement;
   protected _title: HTMLElement;
   protected _price: HTMLElement;
   protected id: string;
+  protected _description: HTMLElement;
+  protected _button: HTMLButtonElement;
 
-  constructor(container: HTMLElement, actions?: ICardActions) {
+  constructor(container: HTMLElement, protected events: IEvents) {
     super(container);
-    this._category = this.ensure('.card__category', container);
+
     this._image = this.ensure('.card__image', container) as HTMLImageElement;
+    this._category = this.ensure('.card__category', container);
     this._title = this.ensure('.card__title', container);
     this._price = this.ensure('.card__price', container);
+    this._description = this.ensure('.card__text', container);
+    this._button = this.ensure('.card__button', container) as HTMLButtonElement;
 
-    if(actions.onClick) {
-      container.addEventListener('click', actions.onClick);
-    }
+    this._button.addEventListener('click', this.addToBasket.bind(this));
   }
 
-  set title(value: string) {
-    this.setValue(this._title, value);
+  set image(value: string) {
+    this.setImage(this._image, `${CDN_URL}${value}`)
   }
 
   set category(value: keyof typeof categoryCard) {
     this.setValue(this._category, value);
     this._category.classList.add(`card__category_${categoryCard[value]}`);
+  }
+
+  set title(value: string) {
+    this.setValue(this._title, value);
   }
 
   set price(value: number) {
@@ -43,7 +51,11 @@ export class CardCatalog extends View<Product> {
     this.setValue(this._price, `${value} синапсов`);
   }
 
-  set image(value: string) {
-    this.setImage(this._image, `${CDN_URL}${value}`)
+  set description(value: string) {
+    this.setValue(this._description, value);
+  }
+
+  addToBasket() {
+    this.events.emit('basket:add', { id: this.id })
   }
 }
