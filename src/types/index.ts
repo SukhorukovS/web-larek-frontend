@@ -19,10 +19,12 @@ export interface UserData {
   address: string;
 }
 
+export type OrderProduct = Pick<Product, 'id' | 'title' | 'price'>;
+
 export interface Order extends UserData {
   payment: "online" | "offline";
   total: number;
-  items: Pick<Product, 'id'>[]
+  items: OrderProduct[]
 }
 
 export interface ApiError {
