@@ -16,8 +16,11 @@ export class Page extends View<IPage> {
 
   constructor(container: HTMLElement, protected events: IEvents) {
     super(container);
-    this._counter = ensureElement<HTMLElement>('.header__basket-counter');
-    this._catalog = ensureElement<HTMLElement>('.gallery')
+    this._counter = this.ensure<HTMLElement>('.header__basket-counter');
+    this._catalog = this.ensure<HTMLElement>('.gallery');
+    this._basket = this.ensure<HTMLElement>('.header__basket');
+
+    this._basket.addEventListener('click', this.onBasketClick.bind(this))
   }
 
   set counter(value: number) {
@@ -26,5 +29,9 @@ export class Page extends View<IPage> {
 
   set catalog(value: HTMLElement[]) {
     this.setValue(this._catalog, value);
+  }
+
+  onBasketClick() {
+    this.events.emit('basket:open');
   }
 }
