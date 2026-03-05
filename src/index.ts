@@ -49,7 +49,7 @@ events.on('productListChanged', (data: ProductList) => {
 events.on('card:select', (data: Product) => {
   const cardView = new CardView(cloneTemplate(cardPreviewTemplate), events);
   modal.render({
-    content: cardView.render(data)
+    content: cardView.render({...data, isInBasket: orderModel.items.some(item => item.id === data.id)})
   })
 })
 

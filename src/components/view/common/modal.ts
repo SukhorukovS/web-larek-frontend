@@ -21,7 +21,6 @@ export class Modal extends View<IModalData> {
 
   close(event: MouseEvent) {
     const target = event.target as HTMLElement;
-    console.log(!target.classList.contains('modal'));
     if (target.classList.contains('modal__close') || target.classList.contains('modal')) {
       this.container.classList.remove('modal_active');
       this.content = null;

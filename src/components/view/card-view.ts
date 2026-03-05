@@ -4,11 +4,7 @@ import { categoryCard } from "../../utils/utils";
 import { IEvents } from "../base/events";
 import { View } from "../base/view";
 
-interface ICardActions {
-  onClick: (event: MouseEvent) => void;
-}
-
-export class CardView extends View<Product> {
+export class CardView extends View<Product & { isInBasket: boolean }> {
   protected _category: HTMLElement;
   protected _image: HTMLImageElement;
   protected _title: HTMLElement;
@@ -16,6 +12,7 @@ export class CardView extends View<Product> {
   protected id: string;
   protected _description: HTMLElement;
   protected _button: HTMLButtonElement;
+  protected _isInBasket: boolean;
 
   constructor(container: HTMLElement, protected events: IEvents) {
     super(container);
@@ -53,6 +50,14 @@ export class CardView extends View<Product> {
 
   set description(value: string) {
     this.setValue(this._description, value);
+  }
+
+  set isInBasket(value: boolean) {
+    this._isInBasket = value;
+    if (value) {
+      this.setValue(this._button, 'Убрать');
+      this.setValue(this._button, { dataset: { value: '-1' } });
+    }
   }
 
   handleButtonClick() {
