@@ -1,6 +1,7 @@
 import { AppApi } from './components/api/AppApi';
 import { EventEmitter } from './components/base/events';
 import { OrderModel } from './components/model/order';
+import { PageModel } from './components/model/page';
 import { ProductListModel } from './components/model/product-list';
 import { Basket } from './components/view/basket';
 import { CardBasket } from './components/view/card-basket';
@@ -34,11 +35,12 @@ const cardBasketTemplate = ensureElement('#card-basket') as HTMLTemplateElement;
 // Models
 const productListModel = new ProductListModel({}, events);
 const orderModel = new OrderModel({}, events);
+const pageModel = new PageModel({screenState: 'main'}, events)
 
 // Views
 const page = new Page(document.body, events);
 const modal = new Modal(ensureElement('#modal-container'), events);
-const basket = new Basket(cloneTemplate(basketTemplate));
+const basket = new Basket(cloneTemplate(basketTemplate), events);
 
 events.on('productListChanged', (data: ProductList) => {
 	page.catalog = data.items.map((item) => {
@@ -63,6 +65,7 @@ events.on('card:select', (data: Product) => {
 			isInBasket: orderModel.items.some((item) => item.id === data.id),
 		}),
 	});
+	pageModel.screenState = 'card:select';
 });
 
 events.on('basket:add', (data: { id: string }) => {
@@ -78,6 +81,9 @@ events.on('basket:remove', (data: { id: string }) => {
 
 events.on('basket:countChange', ({ count }: { count: number }) => {
 	page.counter = count;
+	if (pageModel.screenState === 'basket:open') {
+		events.emit('basket:open');
+	}
 });
 
 events.on('basket:open', () => {
@@ -93,7 +99,12 @@ events.on('basket:open', () => {
 			price: orderModel.items.reduce((prev, cur) => prev + cur.price, 0),
 		}),
 	});
+	pageModel.screenState = 'basket:open';
 });
+
+events.on('modal:close', () => {
+	pageModel.screenState = 'main';
+})
 
 api
 	.getProductList()

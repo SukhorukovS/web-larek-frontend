@@ -26,7 +26,7 @@ export class CardBasket extends View<ICardBasket> {
   }
 
   deleteFromBasket() {
-    this.events.emit('basket:delete', { id: this.id })
+    this.events.emit('basket:remove', { id: this.id })
   }
 
   set index(value: number) {
