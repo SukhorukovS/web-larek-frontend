@@ -81,14 +81,18 @@ events.on('basket:countChange', ({ count }: { count: number }) => {
 });
 
 events.on('basket:open', () => {
-	modal.render({ content: basket.render({
-      items: orderModel.items.map(item => {
-        const cardBasket = new CardBasket(cloneTemplate(cardBasketTemplate));
-        return cardBasket.render(item);
-      }),
-      price: orderModel.items.reduce((prev, cur) => prev + cur.price, 0)
-    }) 
-  });
+	modal.render({
+		content: basket.render({
+			items: orderModel.items.map((item, index) => {
+				const cardBasket = new CardBasket(
+					cloneTemplate(cardBasketTemplate),
+					events
+				);
+				return cardBasket.render({...item, index: index + 1});
+			}),
+			price: orderModel.items.reduce((prev, cur) => prev + cur.price, 0),
+		}),
+	});
 });
 
 api
