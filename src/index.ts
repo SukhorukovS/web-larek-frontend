@@ -10,6 +10,7 @@ import { CardView } from './components/view/card-view';
 import { Modal } from './components/view/common/modal';
 import { OrderFormView } from './components/view/order';
 import { Page } from './components/view/page';
+import { UserForm } from './components/view/user-form';
 import './scss/styles.scss';
 import { Product, ProductList } from './types';
 import { API_URL, CDN_URL } from './utils/constants';
@@ -45,6 +46,7 @@ const page = new Page(document.body, events);
 const modal = new Modal(ensureElement('#modal-container'), events);
 const basket = new Basket(cloneTemplate(basketTemplate), events);
 const orderFormView = new OrderFormView(cloneTemplate(orderTemplate), events);
+const userFormView = new UserForm(cloneTemplate(userTemplate), events);
 
 events.on('productListChanged', (data: ProductList) => {
 	page.catalog = data.items.map((item) => {
@@ -128,8 +130,28 @@ events.on('orderForm:addressChange', (data: { address: string }) => {
 events.on('show:userForm', () => {
 	pageModel.screenState = 'show:userForm';
 	modal.render({
-		content: cloneTemplate(userTemplate),
+		content: userFormView.render(),
 	});
+});
+
+events.on('userForm:emailChange', (data: { email: string }) => {
+	orderModel.email = data.email;
+});
+
+events.on('userForm:phoneChange', (data: { phone: string }) => {
+	orderModel.phone = data.phone;
+});
+
+events.on('userForm:submit', () => {
+	const orderBody = {
+		email: orderModel.email,
+		phone: orderModel.phone,
+		address: orderModel.address,
+		items: orderModel.items.map(item => item.id),
+		total: orderModel.total,
+		payment: orderModel.payment,
+	}
+	api.orderProducts(orderBody);
 });
 
 api

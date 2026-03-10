@@ -1,4 +1,4 @@
-import { Product, ProductList } from '../../types';
+import { ApiOrder, ApiOrderBody, Product, ProductList } from '../../types';
 import { Api, ApiListResponse } from '../base/api';
 
 export class AppApi extends Api {
@@ -12,4 +12,8 @@ export class AppApi extends Api {
   getProductList(): Promise<ProductList> {
     return this.get('/product/').then((data: ApiListResponse<Product>) => data)
   }
+
+	orderProducts(order: ApiOrderBody): Promise<ApiOrder> {
+		return this.post('/order', order).then((data: ApiOrder) => data)
+	}
 }

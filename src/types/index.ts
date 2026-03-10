@@ -21,8 +21,10 @@ export interface UserData {
 
 export type OrderProduct = Pick<Product, 'id' | 'title' | 'price'>;
 
+export type Payment = "card" | "cash";
+
 export interface Order extends UserData {
-  payment: "card" | "cash";
+  payment: Payment;
   total: number;
   items: OrderProduct[]
 }
@@ -34,4 +36,10 @@ export interface ApiError {
 export interface ApiOrder {
   id: string;
   total: number;
+}
+
+export interface ApiOrderBody extends UserData {
+  payment: Payment;
+  total: number;
+  items: string[];
 }

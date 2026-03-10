@@ -5,6 +5,8 @@ export class OrderModel extends Model<Order> {
   items: Order['items'] = [];
   _address: Order['address'];
   _payment: Order['payment'];
+  _email: Order['email'];
+  _phone: Order['phone'];
 
   addProduct(product: OrderProduct) {
     this.items.push(product);
@@ -30,5 +32,25 @@ export class OrderModel extends Model<Order> {
 
   get address() {
     return this._address;
+  }
+
+  set email(value: string) {
+    this._email = value;
+  }
+
+  get email() {
+    return this._email;
+  }
+
+  set phone(value: string) {
+    this._phone = value;
+  }
+
+  get phone() {
+    return this._phone;
+  }
+
+  get total() {
+    return this.items.reduce((total, item) => total + item.price, 0);
   }
 }
