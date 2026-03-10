@@ -8,6 +8,7 @@ import { CardBasket } from './components/view/card-basket';
 import { CardCatalog } from './components/view/card-catalog';
 import { CardView } from './components/view/card-view';
 import { Modal } from './components/view/common/modal';
+import { OrderFormView } from './components/view/order';
 import { Page } from './components/view/page';
 import './scss/styles.scss';
 import { Product, ProductList } from './types';
@@ -31,16 +32,19 @@ const cardPreviewTemplate = ensureElement(
 ) as HTMLTemplateElement;
 const basketTemplate = ensureElement('#basket') as HTMLTemplateElement;
 const cardBasketTemplate = ensureElement('#card-basket') as HTMLTemplateElement;
+const orderTemplate = ensureElement('#order') as HTMLTemplateElement;
+const userTemplate = ensureElement('#contacts') as HTMLTemplateElement;
 
 // Models
 const productListModel = new ProductListModel({}, events);
 const orderModel = new OrderModel({}, events);
-const pageModel = new PageModel({screenState: 'main'}, events)
+const pageModel = new PageModel({ screenState: 'main' }, events);
 
 // Views
 const page = new Page(document.body, events);
 const modal = new Modal(ensureElement('#modal-container'), events);
 const basket = new Basket(cloneTemplate(basketTemplate), events);
+const orderFormView = new OrderFormView(cloneTemplate(orderTemplate), events);
 
 events.on('productListChanged', (data: ProductList) => {
 	page.catalog = data.items.map((item) => {
@@ -94,7 +98,7 @@ events.on('basket:open', () => {
 					cloneTemplate(cardBasketTemplate),
 					events
 				);
-				return cardBasket.render({...item, index: index + 1});
+				return cardBasket.render({ ...item, index: index + 1 });
 			}),
 			price: orderModel.items.reduce((prev, cur) => prev + cur.price, 0),
 		}),
@@ -104,7 +108,29 @@ events.on('basket:open', () => {
 
 events.on('modal:close', () => {
 	pageModel.screenState = 'main';
-})
+});
+
+events.on('show:orderForm', () => {
+	pageModel.screenState = 'show:orderForm';
+	modal.render({
+		content: orderFormView.render(),
+	});
+});
+
+events.on('orderForm:paymentChange', (data: { payment: 'card' | 'cash' }) => {
+	orderModel.payment = data.payment;
+});
+
+events.on('orderForm:addressChange', (data: { address: string }) => {
+	orderModel.address = data.address;
+});
+
+events.on('show:userForm', () => {
+	pageModel.screenState = 'show:userForm';
+	modal.render({
+		content: cloneTemplate(userTemplate),
+	});
+});
 
 api
 	.getProductList()

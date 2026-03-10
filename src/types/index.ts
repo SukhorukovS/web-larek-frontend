@@ -22,7 +22,7 @@ export interface UserData {
 export type OrderProduct = Pick<Product, 'id' | 'title' | 'price'>;
 
 export interface Order extends UserData {
-  payment: "online" | "offline";
+  payment: "card" | "cash";
   total: number;
   items: OrderProduct[]
 }

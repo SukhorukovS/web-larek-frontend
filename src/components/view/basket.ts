@@ -18,7 +18,7 @@ export class Basket extends View<IBasket> {
     this._totalPrice = this.ensure<HTMLElement>('.basket__price');
     this._checkoutButton = this.ensure<HTMLButtonElement>('.basket__button');
 
-    this._checkoutButton.addEventListener('click', this.handleCheckoutClick.bind(this))
+    this._checkoutButton.addEventListener('click', this.handleCheckoutClick.bind(this));
   }
 
   set items(value: HTMLElement[]) {
@@ -26,10 +26,10 @@ export class Basket extends View<IBasket> {
   }
 
   set price(value: number) {
-    this.setValue(this._totalPrice, `${value} синапсов`)
+    this.setValue(this._totalPrice, `${value} синапсов`);
   }
 
   handleCheckoutClick() {
-    this.events.emit('show:orderForm')
+    this.events.emit('show:orderForm');
   }
 }
