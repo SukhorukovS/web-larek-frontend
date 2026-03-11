@@ -159,7 +159,9 @@ events.on('userForm:submit', () => {
 		if ('error' in data) {
 			return;
 		}
+		orderModel.items = [];
 		events.emit('show:successModal', { total: data.total });
+		events.emit('basket:countChange', { count: 0 });
 	});
 });
 

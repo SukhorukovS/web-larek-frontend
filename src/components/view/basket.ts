@@ -9,7 +9,7 @@ interface IBasket {
 export class Basket extends View<IBasket> {
   protected _itemList: HTMLElement;
   protected _totalPrice: HTMLElement;
-  protected _checkoutButton: HTMLElement;
+  protected _checkoutButton: HTMLButtonElement;
 
   constructor(container: HTMLElement, protected events: IEvents) {
     super(container);
@@ -22,6 +22,11 @@ export class Basket extends View<IBasket> {
   }
 
   set items(value: HTMLElement[]) {
+    if (value.length === 0) {
+      this.setValue(this._checkoutButton, { disabled: true });
+      return;
+    }
+    this.setValue(this._checkoutButton, { disabled: false });
     this.setValue(this._itemList, value);
   }
 
