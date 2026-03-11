@@ -43,6 +43,7 @@ export class CardView extends View<Product & { isInBasket: boolean }> {
   set price(value: number) {
     if (value === null) {
       this.setValue(this._price, 'Бесценно');
+      this.setHidden(this._button);
       return;
     }
     this.setValue(this._price, `${value} синапсов`);

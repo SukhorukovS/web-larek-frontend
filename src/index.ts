@@ -10,6 +10,7 @@ import { CardView } from './components/view/card-view';
 import { Modal } from './components/view/common/modal';
 import { OrderFormView } from './components/view/order';
 import { Page } from './components/view/page';
+import { SuccessModalView } from './components/view/success-modal-view';
 import { UserForm } from './components/view/user-form';
 import './scss/styles.scss';
 import { Product, ProductList } from './types';
@@ -35,6 +36,7 @@ const basketTemplate = ensureElement('#basket') as HTMLTemplateElement;
 const cardBasketTemplate = ensureElement('#card-basket') as HTMLTemplateElement;
 const orderTemplate = ensureElement('#order') as HTMLTemplateElement;
 const userTemplate = ensureElement('#contacts') as HTMLTemplateElement;
+const successModalTemplate = ensureElement('#success') as HTMLTemplateElement;
 
 // Models
 const productListModel = new ProductListModel({}, events);
@@ -47,6 +49,10 @@ const modal = new Modal(ensureElement('#modal-container'), events);
 const basket = new Basket(cloneTemplate(basketTemplate), events);
 const orderFormView = new OrderFormView(cloneTemplate(orderTemplate), events);
 const userFormView = new UserForm(cloneTemplate(userTemplate), events);
+const successModalView = new SuccessModalView(
+	cloneTemplate(successModalTemplate),
+	events
+);
 
 events.on('productListChanged', (data: ProductList) => {
 	page.catalog = data.items.map((item) => {
@@ -108,6 +114,8 @@ events.on('basket:open', () => {
 	pageModel.screenState = 'basket:open';
 });
 
+events.on('modal:close:trigger', () => modal.close());
+
 events.on('modal:close', () => {
 	pageModel.screenState = 'main';
 });
@@ -147,11 +155,22 @@ events.on('userForm:submit', () => {
 		email: orderModel.email,
 		phone: orderModel.phone,
 		address: orderModel.address,
-		items: orderModel.items.map(item => item.id),
+		items: orderModel.items.map((item) => item.id),
 		total: orderModel.total,
 		payment: orderModel.payment,
-	}
-	api.orderProducts(orderBody);
+	};
+	api.orderProducts(orderBody).then((data) => {
+		if ('error' in data) {
+			return;
+		}
+		events.emit('show:successModal', { total: data.total });
+	});
+});
+
+events.on('show:successModal', ({ total }: { total: number }) => {
+	modal.render({
+		content: successModalView.render({ total }),
+	});
 });
 
 api
