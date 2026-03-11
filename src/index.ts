@@ -19,10 +19,6 @@ import { cloneTemplate, ensureElement } from './utils/utils';
 
 const events = new EventEmitter();
 
-events.onAll(({ eventName, data }) => {
-	console.log(eventName, data);
-});
-
 const api = new AppApi(API_URL, CDN_URL);
 
 // Templates
