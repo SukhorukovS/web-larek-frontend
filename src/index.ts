@@ -14,7 +14,7 @@ import { SuccessModalView } from './components/view/success-modal-view';
 import { UserForm } from './components/view/user-form';
 import './scss/styles.scss';
 import { Payment, Product, ProductList } from './types';
-import { API_URL, CDN_URL, Events } from './utils/constants';
+import { API_URL, CDN_URL, Events, settings } from './utils/constants';
 import { cloneTemplate, ensureElement } from './utils/utils';
 
 const events = new EventEmitter();
@@ -22,17 +22,27 @@ const events = new EventEmitter();
 const api = new AppApi(API_URL, CDN_URL);
 
 // Templates
-const cardCatalogTemplate = ensureElement(
-	'#card-catalog'
-) as HTMLTemplateElement;
-const cardPreviewTemplate = ensureElement(
-	'#card-preview'
-) as HTMLTemplateElement;
-const basketTemplate = ensureElement('#basket') as HTMLTemplateElement;
-const cardBasketTemplate = ensureElement('#card-basket') as HTMLTemplateElement;
-const orderTemplate = ensureElement('#order') as HTMLTemplateElement;
-const userTemplate = ensureElement('#contacts') as HTMLTemplateElement;
-const successModalTemplate = ensureElement('#success') as HTMLTemplateElement;
+const cardCatalogTemplate = ensureElement<HTMLTemplateElement>(
+	settings.cardCatalogTemplateSelector
+);
+const cardPreviewTemplate = ensureElement<HTMLTemplateElement>(
+	settings.cardPreviewTemplateSelector
+);
+const basketTemplate = ensureElement<HTMLTemplateElement>(
+	settings.basketTemplateSelector
+);
+const cardBasketTemplate = ensureElement<HTMLTemplateElement>(
+	settings.cardBasketTemplateSelector
+);
+const orderTemplate = ensureElement<HTMLTemplateElement>(
+	settings.orderTemplateSelector
+);
+const userTemplate = ensureElement<HTMLTemplateElement>(
+	settings.userTemplateSelector
+);
+const successModalTemplate = ensureElement<HTMLTemplateElement>(
+	settings.successModalTemplateSelector
+);
 
 // Models
 const productListModel = new ProductListModel({}, events);
@@ -41,7 +51,7 @@ const pageModel = new PageModel({ screenState: 'main' }, events);
 
 // Views
 const page = new Page(document.body, events);
-const modal = new Modal(ensureElement('#modal-container'), events);
+const modal = new Modal(ensureElement(settings.modalContainerSelector), events);
 const basket = new Basket(cloneTemplate(basketTemplate), events);
 const orderFormView = new OrderFormView(cloneTemplate(orderTemplate), events);
 const userFormView = new UserForm(cloneTemplate(userTemplate), events);
