@@ -1,3 +1,4 @@
+import { Events } from "../../utils/constants";
 import { IEvents } from "../base/events";
 import { View } from "../base/view";
 
@@ -26,7 +27,7 @@ export class CardBasket extends View<ICardBasket> {
   }
 
   deleteFromBasket() {
-    this.events.emit('basket:remove', { id: this.id })
+    this.events.emit(Events.BASKET_REMOVE, { id: this.id })
   }
 
   set index(value: number) {

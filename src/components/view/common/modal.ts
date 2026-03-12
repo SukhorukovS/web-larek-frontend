@@ -1,3 +1,4 @@
+import { Events } from "../../../utils/constants";
 import { IEvents } from "../../base/events";
 import { View } from "../../base/view";
 
@@ -25,7 +26,7 @@ export class Modal extends View<IModalData> {
 		if (!event || isClickEvent) {
 			this.container.classList.remove('modal_active');
 			this.content = null;
-			this.events.emit('modal:close');
+			this.events.emit(Events.MODAL_CLOSE);
 		}
 	}
 

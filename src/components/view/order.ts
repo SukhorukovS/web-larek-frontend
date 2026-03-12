@@ -1,3 +1,5 @@
+import { Payment } from "../../types";
+import { Events } from "../../utils/constants";
 import { IEvents } from "../base/events";
 import { View } from "../base/view";
 
@@ -28,14 +30,14 @@ export class OrderFormView extends View<object> {
     })
 
     button.classList.add('button_alt-active');
-    this._payment = button.name as 'card' | 'cash';
+    this._payment = button.name as Payment;
 
-    this.events.emit('orderForm:paymentChange', { payment: button.name });
+    this.events.emit(Events.PAYMENT_CHANGE, { payment: button.name });
     this.validateOrderForm();
   }
 
   handleAddressChange() {
-    this.events.emit('orderForm:addressChange', { address: this._addressInput.value });
+    this.events.emit(Events.ADDRESS_CHANGE, { address: this._addressInput.value });
     this.validateOrderForm();
   }
 
@@ -55,7 +57,7 @@ export class OrderFormView extends View<object> {
     event.preventDefault();
 
     if (this.isFormValid) {
-      this.events.emit('show:userForm');
+      this.events.emit(Events.SHOW_USER_FORM);
     }
   }
 }

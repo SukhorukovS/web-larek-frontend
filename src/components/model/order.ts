@@ -1,4 +1,5 @@
-import { Order, OrderProduct } from "../../types";
+import { Order, OrderProduct, Payment } from "../../types";
+import { Events } from "../../utils/constants";
 import { Model } from "../base/model";
 
 export class OrderModel extends Model<Order> {
@@ -10,15 +11,15 @@ export class OrderModel extends Model<Order> {
 
   addProduct(product: OrderProduct) {
     this.items.push(product);
-    this.events.emit('basket:countChange', ({ count: this.items.length }))
+    this.events.emit(Events.BASKET_COUNT_CHANGE, ({ count: this.items.length }))
   }
 
   removeProduct({ id }: { id: string }) {
     this.items = this.items.filter(item => item.id !== id);
-    this.events.emit('basket:countChange', ({ count: this.items.length }))
+    this.events.emit(Events.BASKET_COUNT_CHANGE, ({ count: this.items.length }))
   }
 
-  set payment(value: 'card' | 'cash') {
+  set payment(value: Payment) {
     this._payment = value;
   }
 

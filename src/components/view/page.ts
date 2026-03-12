@@ -1,4 +1,4 @@
-import { ensureElement } from "../../utils/utils";
+import { Events } from "../../utils/constants";
 import { IEvents } from "../base/events";
 import { View } from "../base/view";
 
@@ -32,6 +32,6 @@ export class Page extends View<IPage> {
   }
 
   onBasketClick() {
-    this.events.emit('basket:open');
+    this.events.emit(Events.BASKET_OPEN);
   }
 }

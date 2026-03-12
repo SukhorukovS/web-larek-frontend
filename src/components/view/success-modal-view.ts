@@ -1,3 +1,4 @@
+import { Events } from "../../utils/constants";
 import { IEvents } from "../base/events";
 import { View } from "../base/view";
 
@@ -20,7 +21,7 @@ export class SuccessModalView extends View<ISuccessView> {
   }
 
   handleCloseClick() {
-    this.events.emit('modal:close:trigger');
+    this.events.emit(Events.MODAL_CLOSE_TRIGGER);
   }
 
   set total(value: number) {

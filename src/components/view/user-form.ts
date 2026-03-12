@@ -1,3 +1,4 @@
+import { Events } from "../../utils/constants";
 import { IEvents } from "../base/events";
 import { View } from "../base/view";
 
@@ -21,7 +22,7 @@ export class UserForm extends View<object> {
   handleEmailInput() {
     const email = this._email.value;
 
-    this.events.emit('userForm:emailChange', { email });
+    this.events.emit(Events.EMAIL_CHANGE, { email });
 
     this.validateForm();
   }
@@ -29,13 +30,13 @@ export class UserForm extends View<object> {
   handlePhoneInput() {
     const phone = this._phone.value;
   
-    this.events.emit('userForm:phoneChange', { phone });
+    this.events.emit(Events.PHONE_CHANGE, { phone });
   }
 
   handleSubmitButtonClick(event: Event) {
     event.preventDefault();
     if (this.isValid) {
-      this.events.emit('userForm:submit', { email: this._email.value, phone: this._phone.value });
+      this.events.emit(Events.USER_FORM_SUBMIT, { email: this._email.value, phone: this._phone.value });
     }
   }
 

@@ -13,8 +13,8 @@ import { Page } from './components/view/page';
 import { SuccessModalView } from './components/view/success-modal-view';
 import { UserForm } from './components/view/user-form';
 import './scss/styles.scss';
-import { Product, ProductList } from './types';
-import { API_URL, CDN_URL } from './utils/constants';
+import { Payment, Product, ProductList } from './types';
+import { API_URL, CDN_URL, Events } from './utils/constants';
 import { cloneTemplate, ensureElement } from './utils/utils';
 
 const events = new EventEmitter();
@@ -50,11 +50,11 @@ const successModalView = new SuccessModalView(
 	events
 );
 
-events.on('productListChanged', (data: ProductList) => {
+events.on(Events.PRODUCT_LIST_CHANGED, (data: ProductList) => {
 	page.catalog = data.items.map((item) => {
 		const cardElement = cloneTemplate(cardCatalogTemplate);
 		const card = new CardCatalog(cardElement, {
-			onClick: () => events.emit('card:select', item),
+			onClick: () => events.emit(Events.CARD_SELECT, item),
 		});
 		return card.render({
 			title: item.title,
@@ -65,7 +65,7 @@ events.on('productListChanged', (data: ProductList) => {
 	});
 });
 
-events.on('card:select', (data: Product) => {
+events.on(Events.CARD_SELECT, (data: Product) => {
 	const cardView = new CardView(cloneTemplate(cardPreviewTemplate), events);
 	modal.render({
 		content: cardView.render({
@@ -73,28 +73,28 @@ events.on('card:select', (data: Product) => {
 			isInBasket: orderModel.items.some((item) => item.id === data.id),
 		}),
 	});
-	pageModel.screenState = 'card:select';
+	pageModel.screenState = Events.CARD_SELECT;
 });
 
-events.on('basket:add', (data: { id: string }) => {
+events.on(Events.BASKET_ADD, (data: { id: string }) => {
 	const { id, title, price } = productListModel.items.find(
 		(item) => item.id === data.id
 	);
 	orderModel.addProduct({ id, title, price });
 });
 
-events.on('basket:remove', (data: { id: string }) => {
+events.on(Events.BASKET_REMOVE, (data: { id: string }) => {
 	orderModel.removeProduct({ id: data.id });
 });
 
-events.on('basket:countChange', ({ count }: { count: number }) => {
+events.on(Events.BASKET_COUNT_CHANGE, ({ count }: { count: number }) => {
 	page.counter = count;
-	if (pageModel.screenState === 'basket:open') {
-		events.emit('basket:open');
+	if (pageModel.screenState === Events.BASKET_OPEN) {
+		events.emit(Events.BASKET_OPEN);
 	}
 });
 
-events.on('basket:open', () => {
+events.on(Events.BASKET_OPEN, () => {
 	modal.render({
 		content: basket.render({
 			items: orderModel.items.map((item, index) => {
@@ -107,46 +107,46 @@ events.on('basket:open', () => {
 			price: orderModel.items.reduce((prev, cur) => prev + cur.price, 0),
 		}),
 	});
-	pageModel.screenState = 'basket:open';
+	pageModel.screenState = Events.BASKET_OPEN;
 });
 
-events.on('modal:close:trigger', () => modal.close());
+events.on(Events.MODAL_CLOSE_TRIGGER, () => modal.close());
 
-events.on('modal:close', () => {
+events.on(Events.MODAL_CLOSE, () => {
 	pageModel.screenState = 'main';
 });
 
-events.on('show:orderForm', () => {
-	pageModel.screenState = 'show:orderForm';
+events.on(Events.SHOW_ORDER_FORM, () => {
+	pageModel.screenState = Events.SHOW_ORDER_FORM;
 	modal.render({
 		content: orderFormView.render(),
 	});
 });
 
-events.on('orderForm:paymentChange', (data: { payment: 'card' | 'cash' }) => {
+events.on(Events.PAYMENT_CHANGE, (data: { payment: Payment }) => {
 	orderModel.payment = data.payment;
 });
 
-events.on('orderForm:addressChange', (data: { address: string }) => {
+events.on(Events.ADDRESS_CHANGE, (data: { address: string }) => {
 	orderModel.address = data.address;
 });
 
-events.on('show:userForm', () => {
-	pageModel.screenState = 'show:userForm';
+events.on(Events.SHOW_USER_FORM, () => {
+	pageModel.screenState = Events.SHOW_USER_FORM;
 	modal.render({
 		content: userFormView.render(),
 	});
 });
 
-events.on('userForm:emailChange', (data: { email: string }) => {
+events.on(Events.EMAIL_CHANGE, (data: { email: string }) => {
 	orderModel.email = data.email;
 });
 
-events.on('userForm:phoneChange', (data: { phone: string }) => {
+events.on(Events.PHONE_CHANGE, (data: { phone: string }) => {
 	orderModel.phone = data.phone;
 });
 
-events.on('userForm:submit', () => {
+events.on(Events.USER_FORM_SUBMIT, () => {
 	const orderBody = {
 		email: orderModel.email,
 		phone: orderModel.phone,
@@ -160,12 +160,12 @@ events.on('userForm:submit', () => {
 			return;
 		}
 		orderModel.items = [];
-		events.emit('show:successModal', { total: data.total });
-		events.emit('basket:countChange', { count: 0 });
+		events.emit(Events.SHOW_SUCCESS_MODAL, { total: data.total });
+		events.emit(Events.BASKET_COUNT_CHANGE, { count: 0 });
 	});
 });
 
-events.on('show:successModal', ({ total }: { total: number }) => {
+events.on(Events.SHOW_SUCCESS_MODAL, ({ total }: { total: number }) => {
 	modal.render({
 		content: successModalView.render({ total }),
 	});

@@ -1,5 +1,5 @@
 import { Product } from "../../types";
-import { CDN_URL } from "../../utils/constants";
+import { CDN_URL, Events } from "../../utils/constants";
 import { categoryCard } from "../../utils/utils";
 import { IEvents } from "../base/events";
 import { View } from "../base/view";
@@ -70,13 +70,13 @@ export class CardView extends View<Product & { isInBasket: boolean }> {
   }
 
   removeFromBasket() {
-    this.events.emit('basket:remove', { id: this.id });
+    this.events.emit(Events.BASKET_REMOVE, { id: this.id });
     this.setValue(this._button, 'В корзину');
     this.setValue(this._button, { dataset: { value: '+1' } });
   }
 
   addToBasket() {
-    this.events.emit('basket:add', { id: this.id });
+    this.events.emit(Events.BASKET_ADD, { id: this.id });
     this.setValue(this._button, 'Убрать');
     this.setValue(this._button, { dataset: { value: '-1' } });
   }

@@ -1,4 +1,5 @@
 import { Product, ProductList } from "../../types";
+import { Events } from "../../utils/constants";
 import { Model } from "../base/model";
 
 export class ProductListModel extends Model<ProductList> {
@@ -8,6 +9,6 @@ export class ProductListModel extends Model<ProductList> {
   setProducts(data: ProductList) {
     this.total = data.total;
     this.items = data.items;
-    this.emitChanges('productListChanged', { items: this.items })
+    this.emitChanges(Events.PRODUCT_LIST_CHANGED, { items: this.items })
   }
 }

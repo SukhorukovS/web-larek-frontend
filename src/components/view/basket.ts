@@ -1,3 +1,4 @@
+import { Events } from "../../utils/constants";
 import { IEvents } from "../base/events";
 import { View } from "../base/view";
 
@@ -35,6 +36,6 @@ export class Basket extends View<IBasket> {
   }
 
   handleCheckoutClick() {
-    this.events.emit('show:orderForm');
+    this.events.emit(Events.SHOW_ORDER_FORM);
   }
 }
