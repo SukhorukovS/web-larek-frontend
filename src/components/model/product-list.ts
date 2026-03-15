@@ -11,4 +11,10 @@ export class ProductListModel extends Model<ProductList> {
     this.items = data.items;
     this.emitChanges(Events.PRODUCT_LIST_CHANGED, { items: this.items })
   }
+
+  findProductById(id: string) {
+    return this.items.find(
+      (item) => item.id === id
+    )
+  }
 }

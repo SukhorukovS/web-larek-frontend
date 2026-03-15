@@ -87,9 +87,7 @@ events.on(Events.CARD_SELECT, (data: Product) => {
 });
 
 events.on(Events.BASKET_ADD, (data: { id: string }) => {
-	const { id, title, price } = productListModel.items.find(
-		(item) => item.id === data.id
-	);
+	const { id, title, price } = productListModel.findProductById(data.id);
 	orderModel.addProduct({ id, title, price });
 });
 
