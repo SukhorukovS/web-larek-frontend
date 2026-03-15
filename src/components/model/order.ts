@@ -1,4 +1,4 @@
-import { FormErrors, IUserForm, Order, OrderProduct, Payment } from '../../types';
+import { FormErrors, IOrderForm, IUserForm, Order, OrderProduct, Payment } from '../../types';
 import { Events } from '../../utils/constants';
 import { Model } from '../base/model';
 
@@ -9,6 +9,7 @@ export class OrderModel extends Model<Order> {
 	_email: Order['email'] = '';
 	_phone: Order['phone'] = '';
   userFormErrors: FormErrors = {};
+  orderFormErrors: FormErrors = {};
 
 	addProduct(product: OrderProduct) {
 		this.items.push(product);
@@ -72,6 +73,23 @@ export class OrderModel extends Model<Order> {
 		}
 		this.userFormErrors = errors;
 		this.events.emit(Events.CONTACTS_ERRORS_CHANGE, this.userFormErrors);
+		return Object.keys(errors).length === 0;
+	}
+
+  setOrderField(field: keyof IOrderForm, value: string) {
+		this[field] = value;
+
+		this.validateOrderForm()
+	}
+
+  validateOrderForm() {
+		const errors: typeof this.orderFormErrors = {};
+		if (!this.address) {
+			errors.address = 'Необходимо указать адресс';
+		}
+
+		this.orderFormErrors = errors;
+		this.events.emit(Events.ORDER_ERRORS_CHANGE, this.orderFormErrors);
 		return Object.keys(errors).length === 0;
 	}
 

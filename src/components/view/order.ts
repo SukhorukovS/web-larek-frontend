@@ -1,34 +1,23 @@
+import { Payment } from '../../types';
 import { Events, settings } from '../../utils/constants';
 import { IEvents } from '../base/events';
-import { View } from '../base/view';
+import { Form } from './common/Form';
 
-export class OrderFormView extends View<object> {
+export class OrderFormView extends Form<{ address: string }> {
 	protected _paymentButtons: HTMLElement;
-	protected _addressInput: HTMLInputElement;
-	protected _orderButton: HTMLButtonElement;
 
 	constructor(container: HTMLFormElement, protected events: IEvents) {
-		super(container);
+		super(container, events);
 		this._paymentButtons = this.ensure(settings.paymentButtonListSelector);
-		this._addressInput = container.elements.namedItem(
-			settings.addressInputName
-		) as HTMLInputElement;
-		this._orderButton = this.ensure<HTMLButtonElement>(
-			settings.orderButtonSelector
-		);
 
 		this._paymentButtons.addEventListener(
 			'click',
 			this.handlePaymentButtonClick.bind(this)
 		);
-		this._addressInput.addEventListener(
-			'change',
-			this.handleAddressChange.bind(this)
-		);
-		this._orderButton.addEventListener(
-			'click',
-			this.handleSubmitOrder.bind(this)
-		);
+	}
+
+	set address(value: string) {
+		(this.container.elements.namedItem('address') as HTMLInputElement).value = value;
 	}
 
 	handlePaymentButtonClick(event: MouseEvent) {
@@ -45,33 +34,5 @@ export class OrderFormView extends View<object> {
 		button.classList.add(settings.paymentButtonClassActive);
 
 		this.events.emit(Events.PAYMENT_CHANGE, { payment: button.name });
-		this.validateOrderForm();
-	}
-
-	handleAddressChange() {
-		this.events.emit(Events.ADDRESS_CHANGE, {
-			address: this._addressInput.value,
-		});
-		this.validateOrderForm();
-	}
-
-	validateOrderForm() {
-		if (this.isFormValid) {
-			this._orderButton.disabled = false;
-		} else {
-			this._orderButton.disabled = true;
-		}
-	}
-
-	isFormValid() {
-		return this._addressInput.value;
-	}
-
-	handleSubmitOrder(event: Event) {
-		event.preventDefault();
-
-		if (this.isFormValid) {
-			this.events.emit(Events.SHOW_USER_FORM);
-		}
 	}
 }

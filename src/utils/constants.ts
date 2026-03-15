@@ -57,11 +57,12 @@ export enum Events {
   SHOW_ORDER_FORM = 'show:orderForm',
   PAYMENT_CHANGE = 'orderForm:paymentChange',
   ADDRESS_CHANGE = 'orderForm:addressChange',
-  SHOW_USER_FORM = 'show:userForm',
+  SHOW_USER_FORM = 'order:submit',
   EMAIL_CHANGE = 'contacts.email:change ',
   PHONE_CHANGE = 'contacts.phone:change',
-  CONTACTS_ERRORS_CHANGE = 'contacts.errors:change',
-  USER_FORM_SUBMIT = 'userForm:submit',
+  CONTACTS_ERRORS_CHANGE = 'userForm.errors:change',
+  ORDER_ERRORS_CHANGE = 'orderForm.errors:change',
+  USER_FORM_SUBMIT = 'contacts:submit',
   SHOW_SUCCESS_MODAL = 'show:successModal'
 };
 

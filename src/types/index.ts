@@ -33,7 +33,11 @@ export interface IUserForm {
   phone: string;
 }
 
-export type FormErrors = Partial<Record<keyof IUserForm, string>>;
+export interface IOrderForm {
+  address: string;
+}
+
+export type FormErrors = Partial<Record<keyof IUserForm | keyof IOrderForm, string>>;
 
 export interface ApiError {
   error: string;
