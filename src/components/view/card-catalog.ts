@@ -10,7 +10,6 @@ interface ICardActions {
 export class CardCatalog extends Card<Product> {
 	protected _category: HTMLElement;
 	protected _image: HTMLImageElement;
-	protected id: string;
 
 	constructor(container: HTMLElement, actions?: ICardActions) {
 		super(container, {
