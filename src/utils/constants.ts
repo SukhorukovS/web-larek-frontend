@@ -58,8 +58,9 @@ export enum Events {
   PAYMENT_CHANGE = 'orderForm:paymentChange',
   ADDRESS_CHANGE = 'orderForm:addressChange',
   SHOW_USER_FORM = 'show:userForm',
-  EMAIL_CHANGE = 'userForm:emailChange',
-  PHONE_CHANGE = 'userForm:phoneChange',
+  EMAIL_CHANGE = 'contacts.email:change ',
+  PHONE_CHANGE = 'contacts.phone:change',
+  CONTACTS_ERRORS_CHANGE = 'contacts.errors:change',
   USER_FORM_SUBMIT = 'userForm:submit',
   SHOW_SUCCESS_MODAL = 'show:successModal'
 };

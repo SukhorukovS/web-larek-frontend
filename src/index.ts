@@ -13,13 +13,17 @@ import { Page } from './components/view/page';
 import { SuccessModalView } from './components/view/success-modal-view';
 import { UserForm } from './components/view/user-form';
 import './scss/styles.scss';
-import { Payment, Product, ProductList } from './types';
+import { IUserForm, Payment, Product, ProductList } from './types';
 import { API_URL, CDN_URL, Events, settings } from './utils/constants';
 import { cloneTemplate, ensureElement } from './utils/utils';
 
 const events = new EventEmitter();
 
 const api = new AppApi(API_URL, CDN_URL);
+
+events.onAll(({ eventName, data }) => {
+  console.log(eventName, data);
+})
 
 // Templates
 const cardCatalogTemplate = ensureElement<HTMLTemplateElement>(
@@ -143,16 +147,23 @@ events.on(Events.ADDRESS_CHANGE, (data: { address: string }) => {
 events.on(Events.SHOW_USER_FORM, () => {
 	pageModel.screenState = Events.SHOW_USER_FORM;
 	modal.render({
-		content: userFormView.render(),
+		content: userFormView.render({
+			phone: '',
+			email: '',
+			valid: false,
+			errors: []
+		}),
 	});
 });
 
-events.on(Events.EMAIL_CHANGE, (data: { email: string }) => {
-	orderModel.email = data.email;
+events.on(/^contacts\..*:change/, (data: { field: keyof IUserForm, value: string }) => {
+  orderModel.setUserField(data.field, data.value);
 });
 
-events.on(Events.PHONE_CHANGE, (data: { phone: string }) => {
-	orderModel.phone = data.phone;
+events.on(Events.CONTACTS_ERRORS_CHANGE, (errors: Partial<IUserForm>) => {
+  const { email, phone } = errors;
+  userFormView.valid = !email && !phone;
+  userFormView.errors = Object.values({phone, email}).filter(i => !!i).join('; ');
 });
 
 events.on(Events.USER_FORM_SUBMIT, () => {

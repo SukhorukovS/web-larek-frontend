@@ -1,62 +1,82 @@
-import { Order, OrderProduct, Payment } from "../../types";
-import { Events } from "../../utils/constants";
-import { Model } from "../base/model";
+import { FormErrors, IUserForm, Order, OrderProduct, Payment } from '../../types';
+import { Events } from '../../utils/constants';
+import { Model } from '../base/model';
 
 export class OrderModel extends Model<Order> {
-  items: Order['items'] = [];
-  _address: Order['address'] = '';
-  _payment: Order['payment'] = 'card';
-  _email: Order['email'] = '';
-  _phone: Order['phone'] = '';
+	items: Order['items'] = [];
+	_address: Order['address'] = '';
+	_payment: Order['payment'] = 'card';
+	_email: Order['email'] = '';
+	_phone: Order['phone'] = '';
+  userFormErrors: FormErrors = {};
 
-  addProduct(product: OrderProduct) {
-    this.items.push(product);
-    this.events.emit(Events.BASKET_COUNT_CHANGE, ({ count: this.items.length }))
-  }
+	addProduct(product: OrderProduct) {
+		this.items.push(product);
+		this.events.emit(Events.BASKET_COUNT_CHANGE, { count: this.items.length });
+	}
 
-  removeProduct({ id }: { id: string }) {
-    this.items = this.items.filter(item => item.id !== id);
-    this.events.emit(Events.BASKET_COUNT_CHANGE, ({ count: this.items.length }))
-  }
+	removeProduct({ id }: { id: string }) {
+		this.items = this.items.filter((item) => item.id !== id);
+		this.events.emit(Events.BASKET_COUNT_CHANGE, { count: this.items.length });
+	}
 
-  set payment(value: Payment) {
-    this._payment = value;
-  }
+	set payment(value: Payment) {
+		this._payment = value;
+	}
 
-  get payment() {
-    return this._payment;
-  }
+	get payment() {
+		return this._payment;
+	}
 
-  set address(value: string) {
-    this._address = value
-  }
+	set address(value: string) {
+		this._address = value;
+	}
 
-  get address() {
-    return this._address;
-  }
+	get address() {
+		return this._address;
+	}
 
-  set email(value: string) {
-    this._email = value;
-  }
+	set email(value: string) {
+		this._email = value;
+	}
 
-  get email() {
-    return this._email;
-  }
+	get email() {
+		return this._email;
+	}
 
-  set phone(value: string) {
-    this._phone = value;
-  }
+	set phone(value: string) {
+		this._phone = value;
+	}
 
-  get phone() {
-    return this._phone;
-  }
+	get phone() {
+		return this._phone;
+	}
 
-  get total() {
-    return this.items.reduce((total, item) => total + item.price, 0);
-  }
+	get total() {
+		return this.items.reduce((total, item) => total + item.price, 0);
+	}
 
-  clear() {
-    this.items = [];
-    this.events.emit(Events.BASKET_COUNT_CHANGE, { count: 0 });
-  }
+	setUserField(field: keyof IUserForm, value: string) {
+		this[field] = value;
+
+		this.validateUserForm()
+	}
+
+	validateUserForm() {
+		const errors: typeof this.userFormErrors = {};
+		if (!this.email) {
+			errors.email = 'Необходимо указать email';
+		}
+		if (!this.phone) {
+			errors.phone = 'Необходимо указать телефон';
+		}
+		this.userFormErrors = errors;
+		this.events.emit(Events.CONTACTS_ERRORS_CHANGE, this.userFormErrors);
+		return Object.keys(errors).length === 0;
+	}
+
+	clear() {
+		this.items = [];
+		this.events.emit(Events.BASKET_COUNT_CHANGE, { count: 0 });
+	}
 }

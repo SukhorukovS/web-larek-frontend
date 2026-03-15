@@ -28,6 +28,13 @@ export interface Order extends UserData {
   items: OrderProduct[]
 }
 
+export interface IUserForm {
+  email: string;
+  phone: string;
+}
+
+export type FormErrors = Partial<Record<keyof IUserForm, string>>;
+
 export interface ApiError {
   error: string;
 }
