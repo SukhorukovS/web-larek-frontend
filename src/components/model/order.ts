@@ -4,10 +4,10 @@ import { Model } from "../base/model";
 
 export class OrderModel extends Model<Order> {
   items: Order['items'] = [];
-  _address: Order['address'];
-  _payment: Order['payment'];
-  _email: Order['email'];
-  _phone: Order['phone'];
+  _address: Order['address'] = '';
+  _payment: Order['payment'] = 'card';
+  _email: Order['email'] = '';
+  _phone: Order['phone'] = '';
 
   addProduct(product: OrderProduct) {
     this.items.push(product);
@@ -53,5 +53,10 @@ export class OrderModel extends Model<Order> {
 
   get total() {
     return this.items.reduce((total, item) => total + item.price, 0);
+  }
+
+  clear() {
+    this.items = [];
+    this.events.emit(Events.BASKET_COUNT_CHANGE, { count: 0 });
   }
 }

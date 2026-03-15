@@ -108,10 +108,11 @@ events.on(Events.BASKET_OPEN, () => {
 	modal.render({
 		content: basket.render({
 			items: orderModel.items.map((item, index) => {
-				const cardBasket = new CardBasket(
-					cloneTemplate(cardBasketTemplate),
-					events
-				);
+				const cardBasket = new CardBasket(cloneTemplate(cardBasketTemplate), {
+					onDelete: () => {
+						orderModel.removeProduct({ id: item.id });
+					},
+				});
 				return cardBasket.render({ ...item, index: index + 1 });
 			}),
 			price: orderModel.items.reduce((prev, cur) => prev + cur.price, 0),
@@ -169,15 +170,10 @@ events.on(Events.USER_FORM_SUBMIT, () => {
 		if ('error' in data) {
 			return;
 		}
-		orderModel.items = [];
-		events.emit(Events.SHOW_SUCCESS_MODAL, { total: data.total });
-		events.emit(Events.BASKET_COUNT_CHANGE, { count: 0 });
-	});
-});
-
-events.on(Events.SHOW_SUCCESS_MODAL, ({ total }: { total: number }) => {
-	modal.render({
-		content: successModalView.render({ total }),
+		orderModel.clear();
+		modal.render({
+			content: successModalView.render({ total: data.total }),
+		});
 	});
 });
 

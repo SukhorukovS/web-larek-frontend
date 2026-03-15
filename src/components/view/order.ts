@@ -1,4 +1,3 @@
-import { Payment } from '../../types';
 import { Events, settings } from '../../utils/constants';
 import { IEvents } from '../base/events';
 import { View } from '../base/view';
@@ -6,7 +5,6 @@ import { View } from '../base/view';
 export class OrderFormView extends View<object> {
 	protected _paymentButtons: HTMLElement;
 	protected _addressInput: HTMLInputElement;
-	protected _payment: Payment;
 	protected _orderButton: HTMLButtonElement;
 
 	constructor(container: HTMLFormElement, protected events: IEvents) {
@@ -45,7 +43,6 @@ export class OrderFormView extends View<object> {
 		});
 
 		button.classList.add(settings.paymentButtonClassActive);
-		this._payment = button.name as Payment;
 
 		this.events.emit(Events.PAYMENT_CHANGE, { payment: button.name });
 		this.validateOrderForm();
@@ -67,7 +64,7 @@ export class OrderFormView extends View<object> {
 	}
 
 	isFormValid() {
-		return this._payment && this._addressInput.value;
+		return this._addressInput.value;
 	}
 
 	handleSubmitOrder(event: Event) {

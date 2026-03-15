@@ -1,63 +1,40 @@
-import { Events, settings } from '../../utils/constants';
-import { IEvents } from '../base/events';
-import { View } from '../base/view';
+import { settings } from '../../utils/constants';
+import { Card } from './common/card';
+
+interface ICardBasketActions {
+	onDelete: (event: MouseEvent) => void;
+}
 
 interface ICardBasket {
 	index: number;
-	title: string;
-	price: number;
 }
 
-export class CardBasket extends View<ICardBasket> {
+export class CardBasket extends Card<ICardBasket> {
 	protected _index: HTMLElement;
-	protected _title: HTMLElement;
-	protected _price: HTMLElement;
 	protected _deleteButton: HTMLButtonElement;
-	protected id: string;
 
-	constructor(container: HTMLElement, protected events: IEvents) {
-		super(container);
+	constructor(container: HTMLElement, actions?: ICardBasketActions) {
+		super(container, {
+			titleSelector: settings.basketItemTitleSelector,
+			priceSelector: settings.basketItemPriceSelector,
+		});
 
 		this._index = this.ensure<HTMLElement>(
 			settings.basketItemIndexSelector,
 			container
 		);
-		this._title = this.ensure<HTMLElement>(
-			settings.basketItemTitleSelector,
-			container
-		);
-		this._price = this.ensure<HTMLElement>(
-			settings.basketItemPriceSelector,
-			container
-		);
+
 		this._deleteButton = this.ensure<HTMLButtonElement>(
 			settings.basketItemDeleteSelector,
 			container
 		);
 
-		this._deleteButton.addEventListener(
-			'click',
-			this.deleteFromBasket.bind(this)
-		);
-	}
-
-	deleteFromBasket() {
-		this.events.emit(Events.BASKET_REMOVE, { id: this.id });
+		if (actions?.onDelete) {
+			this._deleteButton.addEventListener('click', actions.onDelete);
+		}
 	}
 
 	set index(value: number) {
 		this.setValue(this._index, `${value}`);
-	}
-
-	set title(value: string) {
-		this.setValue(this._title, value);
-	}
-
-	set price(value: number) {
-		if (value === null) {
-			this.setValue(this._price, 'Бесценно');
-			return;
-		}
-		this.setValue(this._price, `${value} синапсов`);
 	}
 }

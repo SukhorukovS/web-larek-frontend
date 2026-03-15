@@ -2,28 +2,28 @@ import { Product } from '../../types';
 import { CDN_URL, Events, settings } from '../../utils/constants';
 import { categoryCard } from '../../utils/utils';
 import { IEvents } from '../base/events';
-import { View } from '../base/view';
+import { Card } from './common/card';
 
-export class CardView extends View<Product & { isInBasket: boolean }> {
+export class CardView extends Card<Product & { isInBasket: boolean }> {
 	protected _category: HTMLElement;
 	protected _image: HTMLImageElement;
-	protected _title: HTMLElement;
-	protected _price: HTMLElement;
 	protected id: string;
 	protected _description: HTMLElement;
 	protected _button: HTMLButtonElement;
 	protected _isInBasket: boolean;
 
 	constructor(container: HTMLElement, protected events: IEvents) {
-		super(container);
+		super(container, {
+			titleSelector: settings.cardTitleSelector,
+			priceSelector: settings.cardPriceSelector,
+		});
 
 		this._image = this.ensure(
 			settings.cardImageSelector,
 			container
 		) as HTMLImageElement;
 		this._category = this.ensure(settings.cardCategorySelector, container);
-		this._title = this.ensure(settings.cardTitleSelector, container);
-		this._price = this.ensure(settings.cardPriceSelector, container);
+
 		this._description = this.ensure(
 			settings.cardDescriptionSelector,
 			container
@@ -45,17 +45,13 @@ export class CardView extends View<Product & { isInBasket: boolean }> {
 		this._category.classList.add(`card__category_${categoryCard[value]}`);
 	}
 
-	set title(value: string) {
-		this.setValue(this._title, value);
-	}
-
 	set price(value: number) {
+		this.setValue(this._price, value === null ? 'Бесценно' : `${value} синапсов`);
+	
 		if (value === null) {
-			this.setValue(this._price, 'Бесценно');
 			this.setHidden(this._button);
 			return;
 		}
-		this.setValue(this._price, `${value} синапсов`);
 	}
 
 	set description(value: string) {
